@@ -238,7 +238,7 @@ Parul University
 ---
 ## 📬 Contact
 
-🌐 **Live Website:** https://omni-cart-ai.vercel.app/
+🌐 **Live Website:** omni-cart-ai-39pg.vercel.app
 
 ---
 
