@@ -236,6 +236,11 @@ This project is developed for educational and learning purposes.
 Parul University
 
 ---
+## 📬 Contact
+
+🌐 **Live Website:** https://omni-cart-ai.vercel.app/
+
+---
 
 ## ⭐ Support
 
