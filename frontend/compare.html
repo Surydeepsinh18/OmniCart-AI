@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OmniCart AI | Universal AI Shopping Intelligence Engine</title>
+  <meta name="description" content="AI-powered shopping intelligence platform — compare live prices, seller trust, price trends, and stock across 9+ Indian e-commerce platforms." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="compare.css" />
+</head>
+<body>
+
+  <!-- Background Glow & Grid Overlay -->
+  <div class="radial-glow glow-1"></div>
+  <div class="radial-glow glow-2"></div>
+  <div class="radial-glow glow-3"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- App Wrapper -->
+  <div class="app-container">
+
+    <!-- ═══════════ TOP NAVIGATION BAR ═══════════ -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
+            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+            <path class="logo-lightning" d="M12 9h4l-3.5 5 1-4H10l3.5-5-1 4z" fill="currentColor"/>
+          </svg>
+          <span class="logo-text">OmniCart <span class="accent-text">AI</span></span>
+        </a>
+      </div>
+
+      <div class="nav-center">
+        <div style="position: relative; width: 100%; max-width: 440px;" class="search-autocomplete-wrapper">
+          <div class="compare-search-container" style="width: 100%;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="compareSearchInput" placeholder="Search any product (e.g. iPhone 17 Pro, MacBook Air, Sony TV)..." autocomplete="off" />
+            <button id="compareSearchBtn" class="nav-search-btn">⚡ OmniScan</button>
+          </div>
+          <div id="compareAutocompleteDropdown" class="autocomplete-dropdown hidden" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 8px; z-index: 1000; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5);"></div>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <!-- Currency Converter Toggle -->
+        <div class="nav-link-btn" style="padding: 4px 8px; display: flex; align-items: center; gap: 4px;">
+          <span>🌐</span>
+          <select id="currencySelect" style="background:transparent; border:none; color:inherit; font-family:inherit; font-size:0.8rem; font-weight:600; outline:none; cursor:pointer;">
+            <option value="USD" style="background:#060517; color:#fff;">USD ($)</option>
+            <option value="INR" style="background:#060517; color:#fff;">INR (₹)</option>
+            <option value="EUR" style="background:#060517; color:#fff;">EUR (€)</option>
+          </select>
+        </div>
+
+        <!-- Mobile Toggles -->
+        <button class="mobile-sidebar-toggle filters" aria-label="Toggle Filters Sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+        </button>
+        <button class="mobile-sidebar-toggle insights" aria-label="Toggle Insights Panel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+          </svg>
+        </button>
+
+        <a href="cart.html" class="nav-link-btn cart-nav-btn" title="View Cart" id="cartNavLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
+            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+          </svg>
+          <span>Cart</span>
+          <span class="cart-count-badge" id="cartCountBadge" style="display:none">0</span>
+        </a>
+
+        <button class="nav-icon-btn assistant-btn" id="ai-assistant-toggle" title="Toggle AI Chat Assistant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M12 2a10 10 0 0 1 7.54 16.59c-.24.25-.61.35-.95.24a4.34 4.34 0 0 0-2.5 0c-.34.11-.53.44-.45.79.25 1.05.3 2.15.14 3.23a10 10 0 0 1-11.53-4.06c.23-.42.6-.74 1.07-.84.97-.2 1.76-.84 2.13-1.74a10.02 10.02 0 0 1 4.5 4.02Z"/>
+            <path d="M12 8v4M9 10h6"/>
+          </svg>
+        </button>
+
+        <button class="api-settings-btn" id="api-settings-toggle" title="API Key Settings">
+          <span>🔑 API Keys</span>
+        </button>
+
+        <span id="dashboardUserBadge" style="font-size: 0.82rem; color: var(--accent-cyan); font-weight: 700; background: rgba(0,240,255,0.1); padding: 5px 10px; border-radius: 20px; border: 1px solid rgba(0,240,255,0.3);">👤 User</span>
+
+        <button id="dashboardLogoutBtn" class="nav-link-btn" style="border: 1px solid #ff007f; color: #ff007f; background: rgba(255,0,127,0.1); font-weight: 700; cursor: pointer;" title="Logout and return to Home">
+          <span>Logout 🚪</span>
+        </button>
+
+        <a href="index.html" class="nav-link-btn" title="Go to Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Home</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ═══════════ MAIN 3-COLUMN WORKSPACE ═══════════ -->
+    <div class="dashboard-body">
+
+      <!-- 1. LEFT SIDEBAR: AI Bargain & Shopping Superpowers Control Center -->
+      <aside class="sidebar-left" id="sidebar-filters">
+        <div class="sidebar-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 0 16px rgba(0,240,255,0.4); flex-shrink: 0;">🔮</div>
+            <div style="display: flex; flex-direction: column;">
+              <h3 style="font-size: 1.05rem; font-family: var(--font-heading); color: #ffffff !important; margin: 0; line-height: 1.2; font-weight: 800;">AI Superpowers</h3>
+              <span style="font-size: 0.72rem; color: var(--accent-cyan); font-weight: 600; margin-top: 2px;">Autonomous Shopping Hub</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="filters-scroll-area" style="display: flex; flex-direction: column; gap: 18px;">
+
+          <!-- 1. 🤖 AI BARGAIN & NEGOTIATION BOT -->
+          <div class="ai-bargain-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; min-width: 0;">
+              <span style="
+                font-size: 0.78rem;
+                font-weight: 800;
+                color: #c084fc;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              ">🤖 AI Bargain Bot</span>
+              <span style="
+                font-size: 0.65rem;
+                background: rgba(168,85,247,0.3);
+                color: #e9d5ff;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-weight: 800;
+                flex-shrink: 0;
+              ">PRO</span>
+            </div>
+            <p style="
+              font-size: 0.74rem;
+              color: var(--text-secondary);
+              line-height: 1.4;
+              margin-bottom: 12px;
+              word-break: break-word;
+            ">Auto-negotiates secret cashback, applies merchant promo codes &amp; slashes total cart cost.</p>
+            <button id="runBargainBotBtn" class="btn btn-primary btn-glow" style="
+              display: block;
+              width: 100%;
+              box-sizing: border-box;
+              padding: 9px 8px;
+              font-size: 0.8rem;
+              font-weight: 700;
+              background: linear-gradient(90deg, #a855f7, #00f0ff);
+              border: none;
+              border-radius: 10px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            ">⚡ Run AI Deal Slasher</button>
+            <div id="bargainResultBox" style="
+              display: none;
+              margin-top: 10px;
+              padding: 8px 10px;
+              background: rgba(0,0,0,0.6);
+              border-radius: 8px;
+              font-size: 0.74rem;
+              color: #34d399;
+              font-family: monospace;
+              word-break: break-word;
+              white-space: pre-wrap;
+            "></div>
+          </div>
+
+          <!-- 2. ⚔️ VS MODE: 1-CLICK PRODUCT BATTLES -->
+          <div class="filter-section">
+            <h4 class="filter-title" style="display: flex; align-items: center; justify-content: space-between; font-size: 0.84rem; color: #fff; margin-bottom: 10px;">
+              <span>⚔️ 1-Click Product Battles</span>
+              <span style="font-size: 0.7rem; color: var(--accent-cyan);">VERSUS MODE</span>
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              
+              <div class="run-analyze-trigger" data-query="iPhone 16 Pro vs Samsung S24 Ultra" style="background: rgba(15, 10, 40, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s ease;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 700; color: #fff;">
+                  <span>📱 iPhone 16 Pro</span>
+                  <span style="color: #ff007f; font-size: 0.72rem; font-weight: 900;">VS</span>
+                  <span>Galaxy S24 📱</span>
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center; margin-top: 4px;">Compare Cameras, Battery & Deals ⚡</div>
+              </div>
+
+              <div class="run-analyze-trigger" data-query="MacBook Air M4 vs Dell XPS 16" style="background: rgba(15, 10, 40, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s ease;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 700; color: #fff;">
+                  <span>💻 MacBook M4</span>
+                  <span style="color: #ff007f; font-size: 0.72rem; font-weight: 900;">VS</span>
+                  <span>Dell XPS 16 💻</span>
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center; margin-top: 4px;">Performance & Price Faceoff ⚡</div>
+              </div>
+
+              <div class="run-analyze-trigger" data-query="Sony WH-1000XM5 vs Bose QC Ultra" style="background: rgba(15, 10, 40, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s ease;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 700; color: #fff;">
+                  <span>🎧 Sony XM5</span>
+                  <span style="color: #ff007f; font-size: 0.72rem; font-weight: 900;">VS</span>
+                  <span>Bose QC Ultra 🎧</span>
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center; margin-top: 4px;">Noise Cancellation & Price ⚡</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 3. 💳 NO-COST EMI & MONTHLY BUDGET CALCULATOR -->
+          <div class="filter-section" style="background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 14px; padding: 14px;">
+            <h4 class="filter-title" style="font-size: 0.82rem; color: var(--accent-cyan); margin-bottom: 4px;">💳 No-Cost EMI & Budget Finder</h4>
+            <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px;">Select your EMI tenure to calculate monthly installments across stores.</p>
+            <select id="emiTenureSelect" style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid var(--border-light); border-radius: 8px; padding: 8px; color: #fff; font-size: 0.8rem; outline: none; margin-bottom: 8px;">
+              <option value="0">Full Payment (No EMI)</option>
+              <option value="3">3 Months No-Cost EMI (0% Interest)</option>
+              <option value="6">6 Months No-Cost EMI (0% Interest)</option>
+              <option value="9">9 Months Low-Cost EMI</option>
+              <option value="12">12 Months Zero Down Payment EMI</option>
+            </select>
+            <div id="emiCalcBadge" style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700; text-align: center; display: none;">
+              ⚡ Monthly EMI Plan Active
+            </div>
+          </div>
+
+          <!-- 4. 🚨 FAKE PRICE INFLATION SHIELD -->
+          <div class="filter-section">
+            <h4 class="filter-title" style="font-size: 0.82rem; color: #fff; margin-bottom: 8px;">🚨 Scam & Inflation Detector</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label class="custom-toggle-label" style="font-size: 0.78rem;">
+                <input type="checkbox" id="toggle-fake-inflation" checked>
+                <span class="toggle-switch"></span>
+                <span>Block Fake Discount Hikes</span>
+              </label>
+              <label class="custom-toggle-label" style="font-size: 0.78rem;">
+                <input type="checkbox" id="toggle-trust-only" checked>
+                <span class="toggle-switch"></span>
+                <span>Verified Stores Only (&gt;80% Trust)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 5. ⭐ MINIMUM RATING FILTER -->
+          <div class="filter-section">
+            <h4 class="filter-title" style="font-size: 0.82rem; color: #fff; margin-bottom: 8px;">⭐ Minimum Rating</h4>
+            <select id="ratingFilterSelect" style="width: 100%; background: rgba(0,0,0,0.6); border: 1px solid var(--border-light); border-radius: 8px; padding: 8px; color: #fff; font-size: 0.8rem; outline: none;">
+              <option value="0">Show All Ratings</option>
+              <option value="4.0">4.0★ & above</option>
+              <option value="4.3">4.3★ & above</option>
+              <option value="4.5">4.5★ & above</option>
+            </select>
+          </div>
+
+          <!-- 6. 🚚 DELIVERY SPEED FILTER -->
+          <div class="filter-section">
+            <h4 class="filter-title" style="font-size: 0.82rem; color: #fff; margin-bottom: 8px;">🚚 Delivery Speed</h4>
+            <label class="custom-toggle-label" style="font-size: 0.78rem;">
+              <input type="checkbox" id="toggle-express-delivery">
+              <span class="toggle-switch"></span>
+              <span>Express / Same-day Only</span>
+            </label>
+          </div>
+
+          <!-- 7. 📊 SEARCH HISTORY PANEL -->
+          <div class="filter-section">
+            <h4 class="filter-title" style="font-size: 0.82rem; color: #fff; margin-bottom: 8px;">📊 Recent Searches</h4>
+            <div id="searchHistoryContainer" style="display:flex; flex-direction:column; gap:6px;">
+            </div>
+          </div>
+
+          <!-- 8. 🔔 WISHLIST & PRICE ALERTS -->
+          <div class="filter-section">
+            <h4 class="filter-title" style="font-size: 0.82rem; color: #fff; margin-bottom: 8px;">🔔 Wishlist & Alerts</h4>
+            <div id="wishlistContainer" style="display:flex; flex-direction:column; gap:8px; max-height: 250px; overflow-y: auto;">
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- 2. CENTER FEED: Main Universal Comparison Workspace -->
+      <main class="main-workspace">
+
+        <!-- Banner Search Section -->
+        <section class="dashboard-search-sec">
+          <div class="search-banner">
+            <h1>OmniScan Intelligence</h1>
+            <p>Real-time live product data comparison across 9 major shopping databases</p>
+          </div>
+
+          <div class="main-search-wrapper">
+            <div style="position: relative; width: 100%;" class="search-autocomplete-wrapper">
+              <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="feedSearchInput" placeholder="Search any product... (e.g. iPhone 17 Pro Max, MacBook Air M4, Sony TV)" autocomplete="off">
+                <button id="feedSearchBtn" class="btn btn-primary">Run OmniScan</button>
+              </div>
+              <div id="feedAutocompleteDropdown" class="autocomplete-dropdown hidden" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 8px; z-index: 1000; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5);"></div>
+            </div>
+
+            <!-- Quick Suggestion Chips -->
+            <div class="suggestions-chips-row">
+              <span class="chips-label">Popular Searches:</span>
+              <div class="chips-list">
+                <button class="chip" data-query="iPhone 17 Pro Max">📱 iPhone 17 Pro</button>
+                <button class="chip" data-query="MacBook Air M4">💻 MacBook Air M4</button>
+                <button class="chip" data-query="Sony WH-1000XM6">🎧 Sony WH-1000XM6</button>
+                <button class="chip" data-query="Samsung Galaxy S26">📱 Samsung Galaxy S26</button>
+                <button class="chip" data-query="Dell XPS 16 Laptop">💻 Dell XPS 16</button>
+                <button class="chip" data-query="Bose QuietComfort Ultra">🎧 Bose QuietComfort</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RADAR SCANNING OVERLAY -->
+        <div id="search-scanning-overlay" class="scanning-overlay hidden">
+          <div class="scanning-indicator-box">
+            <div class="scanner-ring-container">
+              <div class="scanner-circle circle-o"></div>
+              <div class="scanner-circle circle-m"></div>
+              <div class="scanner-circle circle-i"></div>
+              <div class="scanner-radar-line"></div>
+            </div>
+            <h3 class="scanning-headline">Scanning Shopping Databases</h3>
+            <p class="scanning-log" id="scanningLogText">Connecting to merchant API clusters...</p>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill-indicator" id="scan-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INITIAL EMPTY STATE -->
+        <section class="initial-empty-state" id="initialEmptyState">
+          <div class="empty-hero-card">
+            <div class="empty-icon-glow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="60" height="60">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <h2>Universal Product Comparison Engine</h2>
+            <p>Type any product in the search bar above to compare prices, discounts, ratings, delivery speed, and seller trust across <strong>9 shopping platforms</strong>.</p>
+          </div>
+        </section>
+
+        <!-- ACTIVE RESULTS CONTAINER -->
+        <div id="resultsContainer" class="results-container hidden">
+
+          <!-- Dynamic Hero Banner -->
+          <section class="compare-hero">
+            <div class="hero-glow-orb"></div>
+            <div class="hero-content">
+              <span class="hero-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 16a6 6 0 1 1 6-6 6 6 0 0 1-6 6Z"/>
+                </svg>
+                AI Comparison Results
+              </span>
+              <h1 id="heroTitle">Product Comparison</h1>
+              <p class="hero-subtitle">Real-time market analysis across <strong>9 shopping platforms</strong> — powered by OmniCart Intelligence</p>
+            </div>
+          </section>
+
+          <!-- ⚔️ VERSUS MODE — AI WINNER BATTLE SCORECARD -->
+          <section id="versusScorecardSection" class="hidden" style="margin-bottom: 24px;">
+            <div style="background: linear-gradient(135deg, rgba(15, 10, 45, 0.95), rgba(25, 15, 65, 0.95)); border: 1px solid var(--accent-cyan); border-radius: 20px; padding: 24px; box-shadow: 0 10px 40px rgba(0, 240, 255, 0.2); position: relative; overflow: hidden;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 1.4rem;">⚔️</span>
+                  <div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: #fff; margin: 0;" id="vsHeaderTitle">AI Versus Faceoff Scorecard</h3>
+                    <span style="font-size: 0.78rem; color: var(--accent-cyan);">Side-by-Side Winner & Performance Analysis</span>
+                  </div>
+                </div>
+                <span style="font-size: 0.8rem; font-weight: 800; background: var(--gradient-primary); color: #030013; padding: 5px 12px; border-radius: 12px;" id="vsWinnerBadge">🏆 WINNER: Product 1</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;" id="vsCardsGrid">
+              </div>
+
+              <div style="background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 14px; display: flex; gap: 12px; align-items: flex-start;">
+                <span style="font-size: 1.2rem;">💡</span>
+                <div>
+                  <h4 style="font-size: 0.88rem; color: var(--accent-cyan); margin: 0 0 4px 0; font-weight: 700;">AI Decision Verdict</h4>
+                  <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0; line-height: 1.4;" id="vsVerdictText">Generating faceoff verdict...</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 8 AI METRIC CARDS -->
+          <section class="metrics-section">
+            <div class="metrics-grid" id="metricsGrid">
+            </div>
+          </section>
+
+          <!-- AI SMART BUYING DECISION PANEL -->
+          <section class="decision-section" id="decisionSection">
+            <div class="section-label-row">
+              <div class="section-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-3.12 3 3 0 0 1 0-3.88 2.5 2.5 0 0 1 0-3.12A2.5 2.5 0 0 1 9.5 2Z"/>
+                  <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-3.12 3 3 0 0 0 0-3.88 2.5 2.5 0 0 0 0-3.12A2.5 2.5 0 0 0 14.5 2Z"/>
+                </svg>
+                <h2>AI Smart Buying Decision</h2>
+              </div>
+            </div>
+            <div class="decision-grid" id="decisionGrid">
+            </div>
+          </section>
+
+          <!-- UNIVERSAL 9-PLATFORM COMPARISON TABLE -->
+          <section class="table-section">
+            <div class="section-label-row">
+              <div class="section-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                  <line x1="3" y1="15" x2="21" y2="15"></line>
+                  <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+                <h2>Platform Comparison Matrix</h2>
+              </div>
+              <span class="platform-count-badge" id="platformCountBadge">9 Platforms</span>
+            </div>
+            <div class="table-glass-wrapper">
+              <table id="comparisonTable">
+                <thead>
+                  <tr>
+                    <th>Select</th>
+                    <th>Platform</th>
+                    <th>Product</th>
+                    <th>Current Price</th>
+                    <th>Original Price</th>
+                    <th>Discount</th>
+                    <th>Rating</th>
+                    <th>Delivery</th>
+                    <th>Seller Trust</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="comparisonTableBody">
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 30-DAY PRICE HISTORY CANVAS CHART -->
+          <section class="chart-section">
+            <div class="section-label-row">
+              <div class="section-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                <h2>30-Day Price History</h2>
+              </div>
+            </div>
+            <div class="chart-glass-card">
+              <canvas id="priceHistoryCanvas" width="900" height="280"></canvas>
+              <div class="chart-legend" id="chartLegend"></div>
+            </div>
+          </section>
+
+          <!-- POPULAR AI RECOMMENDATIONS GRID -->
+          <section class="dashboard-recommendations">
+            <h2>Popular AI Recommendations <span style="font-size:0.72rem; color: var(--accent-cyan); font-weight:600; margin-left:8px;">Click any card to compare ⚡</span></h2>
+            <div class="recommendations-grid">
+
+              <!-- Card 1 -->
+              <div class="rec-card glass-card run-analyze-trigger"
+                   data-query="iPhone 17 Pro Max"
+                   style="cursor: pointer; position: relative;"
+                   title="Click to compare iPhone 17 Pro Max">
+                <div class="rec-image-wrapper prod-1">
+                  <span class="ai-rec-badge best-price">AI Pick - Best Price</span>
+                  <div class="prod-icon">📱</div>
+                </div>
+                <div class="rec-card-body">
+                  <h3 class="rec-product-name">iPhone 17 Pro Max (256GB)</h3>
+                  <div class="rec-meta-row">
+                    <div><span class="label">Trust</span><span class="value val-green">96%</span></div>
+                    <div><span class="label">Lowest Price</span><span class="value">$1,149.00</span></div>
+                  </div>
+                  <div style="margin-top:8px; font-size:0.72rem; color: var(--accent-cyan); font-weight:600; text-align:center; opacity:0.85;">
+                    ⚡ Click to Compare Prices
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="rec-card glass-card run-analyze-trigger"
+                   data-query="Sony BRAVIA XR OLED 55"
+                   style="cursor: pointer; position: relative;"
+                   title="Click to compare Sony BRAVIA XR OLED 55">
+                <div class="rec-image-wrapper prod-2">
+                  <span class="ai-rec-badge best-value">AI Pick - Best Value</span>
+                  <div class="prod-icon">📺</div>
+                </div>
+                <div class="rec-card-body">
+                  <h3 class="rec-product-name">Sony BRAVIA XR OLED 55"</h3>
+                  <div class="rec-meta-row">
+                    <div><span class="label">Trust</span><span class="value val-green">94%</span></div>
+                    <div><span class="label">Lowest Price</span><span class="value">$1,398.00</span></div>
+                  </div>
+                  <div style="margin-top:8px; font-size:0.72rem; color: var(--accent-cyan); font-weight:600; text-align:center; opacity:0.85;">
+                    ⚡ Click to Compare Prices
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3 -->
+              <div class="rec-card glass-card run-analyze-trigger"
+                   data-query="Dell XPS 16 Laptop"
+                   style="cursor: pointer; position: relative;"
+                   title="Click to compare Dell XPS 16 Laptop">
+                <div class="rec-image-wrapper prod-3">
+                  <span class="ai-rec-badge best-features">AI Pick - Top Ratings</span>
+                  <div class="prod-icon">💻</div>
+                </div>
+                <div class="rec-card-body">
+                  <h3 class="rec-product-name">Dell XPS 16 Developer Laptop</h3>
+                  <div class="rec-meta-row">
+                    <div><span class="label">Trust</span><span class="value val-yellow">89%</span></div>
+                    <div><span class="label">Lowest Price</span><span class="value">$1,799.00</span></div>
+                  </div>
+                  <div style="margin-top:8px; font-size:0.72rem; color: var(--accent-cyan); font-weight:600; text-align:center; opacity:0.85;">
+                    ⚡ Click to Compare Prices
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 4 -->
+              <div class="rec-card glass-card run-analyze-trigger"
+                   data-query="Bose QuietComfort Ultra"
+                   style="cursor: pointer; position: relative;"
+                   title="Click to compare Bose QuietComfort Ultra">
+                <div class="rec-image-wrapper prod-4">
+                  <span class="ai-rec-badge low-risk">AI Pick - Low Risk</span>
+                  <div class="prod-icon">🎧</div>
+                </div>
+                <div class="rec-card-body">
+                  <h3 class="rec-product-name">Bose QuietComfort Ultra</h3>
+                  <div class="rec-meta-row">
+                    <div><span class="label">Trust</span><span class="value val-green">97%</span></div>
+                    <div><span class="label">Lowest Price</span><span class="value">$329.00</span></div>
+                  </div>
+                  <div style="margin-top:8px; font-size:0.72rem; color: var(--accent-cyan); font-weight:600; text-align:center; opacity:0.85;">
+                    ⚡ Click to Compare Prices
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ACTION CONTROL BAR -->
+          <section class="action-bar">
+            <button class="action-btn primary" onclick="window.location.reload();">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+              Compare Again
+            </button>
+            <button class="action-btn outline" onclick="window.location.href='cart.html'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              View Cart
+            </button>
+            <button class="action-btn outline" id="exportReportBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              Export PDF
+            </button>
+            <button class="action-btn outline" id="shareReportBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              Share Link
+            </button>
+          </section>
+
+        </div>
+
+      </main>
+
+      <!-- 3. RIGHT SIDEBAR: AI Shopping Intelligence Insights Panel -->
+      <aside class="sidebar-right" id="sidebar-insights">
+        <div class="insights-header">
+          <svg class="insights-glowing-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-3.12 3 3 0 0 1 0-3.88 2.5 2.5 0 0 1 0-3.12A2.5 2.5 0 0 1 9.5 2Z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-3.12 3 3 0 0 0 0-3.88 2.5 2.5 0 0 0 0-3.12A2.5 2.5 0 0 0 14.5 2Z"/>
+          </svg>
+          <h3>AI Shopping Intelligence</h3>
+        </div>
+
+        <div class="insights-scroll-area">
+          
+          <div class="insights-empty-state" id="insights-empty">
+            <div class="pulsing-brain-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="54" height="54">
+                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                <path class="brain-inner-pulse" d="M12 6v12M9 8h6M8 12h8M9 16h6" stroke-width="2"/>
+              </svg>
+            </div>
+            <h4>Ready to Analyze</h4>
+            <p>Run a search query to activate real-time shopping intelligence scans across all 9 platforms.</p>
+          </div>
+
+          <div class="insights-active-content hidden" id="insights-active">
+            <div class="active-insights-prod-header">
+              <span class="active-res-category" id="active-res-category">Computational Hardware</span>
+              <h4 id="active-res-product-title">Dell XPS 16 Laptop</h4>
+            </div>
+
+            <div class="insight-block rec-platform-card">
+              <div class="insight-block-header">
+                <span class="label">Best buying platform</span>
+                <span class="savings-pill" id="active-res-savings-pill">Save 12%</span>
+              </div>
+              <div class="best-platform-brand-row">
+                <span class="best-platform-logo" id="active-res-best-platform">Amazon</span>
+                <span class="best-platform-price" id="active-res-best-price">$1,799.00</span>
+              </div>
+              <p class="rec-explanation-text" id="active-res-explanation">Amazon is offering the lowest price with free express shipping. Flipkart is listed $60 higher.</p>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="sidebar-buy-now-btn" id="active-res-buy-link">⚡ Buy Now on Amazon ↗</a>
+              <button id="sidebar-add-cart-btn" style="
+                display: block;
+                width: 100%;
+                margin-top: 8px;
+                padding: 10px;
+                background: rgba(0, 240, 255, 0.1);
+                border: 1px solid rgba(0, 240, 255, 0.4);
+                border-radius: 10px;
+                color: var(--accent-cyan);
+                font-size: 0.84rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-family: var(--font-body);
+              " onmouseover="this.style.background='rgba(0,240,255,0.2)'" onmouseout="this.style.background='rgba(0,240,255,0.1)'">🛒 Add to Cart</button>
+            </div>
+
+            <div class="insight-block grid-2-col">
+              <div class="stat-box">
+                <span class="label">Estimated Savings</span>
+                <span class="stat-value val-green" id="active-res-savings">$210.00</span>
+              </div>
+              <div class="stat-box">
+                <span class="label">Seller Trust Score</span>
+                <span class="stat-value val-purple" id="active-res-trust">92%</span>
+              </div>
+            </div>
+
+            <div class="insight-block advice-card">
+              <div class="advice-header-row">
+                <span class="label">Best Buying Time</span>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="advice-action-badge buy-link-badge" id="active-res-advice-badge">⚡ Buy Now ↗</a>
+              </div>
+              <div class="advice-body">
+                <p id="active-res-advice-text">Prices are currently at an optimal level. Predictive models project a price increase soon.</p>
+              </div>
+            </div>
+
+            <div class="insight-block price-prediction-block">
+              <span class="label">30-Day Projected Price Trend</span>
+              <div class="active-price-sparkline">
+                <svg viewBox="0 0 200 80" class="sparkline-large">
+                  <defs>
+                    <linearGradient id="large-chart-glow" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.3" />
+                      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  <path id="sparkline-path" d="M 0 60 L 30 55 L 60 70 L 90 45 L 120 40 L 150 25 L 180 15 L 200 10" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+                  <path id="sparkline-fill" d="M 0 60 L 30 55 L 60 70 L 90 45 L 120 40 L 150 25 L 180 15 L 200 10 L 200 80 L 0 80 Z" fill="url(#large-chart-glow)"/>
+                  <circle id="sparkline-dot" cx="200" cy="10" r="4" fill="#00f0ff"/>
+                </svg>
+              </div>
+              <div class="sparkline-labels">
+                <span>30 Days Ago</span>
+                <span>Current</span>
+                <span>Projected</span>
+              </div>
+            </div>
+
+            <div class="insight-block breakdown-list-block">
+              <span class="label">Listing Scans</span>
+              <div class="breakdown-list" id="active-res-listings">
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- AI CHAT ASSISTANT DRAWER -->
+  <div class="ai-assistant-drawer" id="assistant-drawer">
+    <div class="drawer-header">
+      <div class="drawer-header-title">
+        <span class="status-indicator-active"></span>
+        <h4>OmniCart Chat Agent</h4>
+      </div>
+      <button class="close-drawer-btn" id="close-assistant-btn">&times;</button>
+    </div>
+    <div class="drawer-chat-area" id="drawer-messages">
+      <div class="chat-message bot">
+        <p>Hello! I am your AI Shopping Assistant. Ask me to compare products, track price predictions, or scan seller trust scores for you. What are you looking to buy today?</p>
+      </div>
+    </div>
+    <div class="drawer-input-row">
+      <input type="text" id="assistant-chat-input" placeholder="Ask the shopping agent...">
+      <button id="assistant-chat-send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- API SETTINGS MODAL -->
+  <div class="api-modal-overlay hidden" id="api-modal">
+    <div class="api-modal-content">
+      <div class="api-modal-header">
+        <h3>🔑 Live API Key Settings</h3>
+        <button class="api-modal-close" id="close-api-modal">&times;</button>
+      </div>
+      <div class="api-modal-body">
+        <p class="api-desc">Connect your <strong>Google Gemini AI Key</strong> to empower the OmniCart Chat Agent with real-time generative AI intelligence. You can also connect RapidAPI or SerpAPI keys for direct live e-commerce search queries.</p>
+        <div class="api-field">
+          <label for="api-provider-select">AI & Search Provider:</label>
+          <select id="api-provider-select" class="api-select">
+            <option value="gemini">Google Gemini AI Engine (Active)</option>
+            <option value="rapidapi">RapidAPI (Live Amazon & Flipkart Data)</option>
+            <option value="serpapi">SerpAPI (Google Shopping India)</option>
+            <option value="auto">Auto Live Search Engine (Built-in Free Engine)</option>
+          </select>
+        </div>
+        <div class="api-field">
+          <label for="api-key-input">Google Gemini / RapidAPI Key:</label>
+          <input type="password" id="api-key-input" placeholder="Paste your Google Gemini AI key here (e.g. AIzaSy...)..." class="api-input">
+        </div>
+        <div class="api-status-box" id="api-status-box">
+          <span class="status-dot green"></span>
+          <span id="api-status-text">Active: Google Gemini AI & OmniCart Engine</span>
+        </div>
+      </div>
+      <div class="api-modal-footer">
+        <button class="btn-secondary" id="clear-api-key">Clear Key</button>
+        <button class="btn-primary" id="save-api-key">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- User Profile Small Popup Modal -->
+  <div class="api-modal-overlay hidden" id="user-profile-modal" style="z-index: 2000; position: fixed; inset: 0; background: rgba(3,0,15,0.75); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center;">
+    <div style="width: 100%; max-width: 380px; border-radius: 20px; padding: 28px; background: rgba(8, 5, 30, 0.95); border: 1px solid var(--border-glow); box-shadow: 0 20px 60px rgba(0, 240, 255, 0.35); position: relative; margin: 16px;">
+      
+      <button id="closeProfileModal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer;">&times;</button>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--gradient-primary); color: #030013; font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0,240,255,0.4); margin-bottom: 12px;" id="profileAvatar">
+          S
+        </div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.3rem; color: #ffffff; margin: 0 0 4px 0;" id="profileName">Surydeepsinh Rajput</h3>
+        <span style="display: inline-block; font-size: 0.75rem; background: rgba(16, 185, 129, 0.2); color: #a7f3d0; padding: 3px 10px; border-radius: 12px; font-weight: 600;">✨ Verified OmniCart Shopper</span>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; font-size: 0.88rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: var(--text-muted);">📧 Email ID</span>
+          <strong style="color: #ffffff; max-width: 200px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" id="profileEmail">user@example.com</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: var(--text-muted);">🛒 Saved Cart Items</span>
+          <strong style="color: var(--accent-cyan);" id="profileCartCount">0 Items</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: var(--text-muted);">🔑 AI API Key</span>
+          <strong style="color: #10b981;" id="profileApiKeyStatus">Gemini Connected</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: var(--text-muted);">🛡️ Account Status</span>
+          <strong style="color: #38bdf8;">Active Session</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a href="cart.html" class="btn btn-primary btn-glow" style="text-align: center; text-decoration: none; display: block; width: 100%;">🛒 View My Saved Cart</a>
+        <button id="profileLogoutBtn" class="btn btn-outline" style="width: 100%; border-color: #ff007f; color: #ff007f; cursor: pointer;">🚪 Logout Account</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Floating Shortlist Comparison Bar -->
+  <div id="shortlistCompareBar" class="floating-compare-bar hidden" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(12, 10, 32, 0.95); border: 2px solid var(--accent-cyan); border-radius: 50px; padding: 10px 24px; z-index: 2500; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 40px rgba(0, 240, 255, 0.4); backdrop-filter: blur(15px); transition: all 0.3s ease;">
+    <span style="font-family: var(--font-heading); font-size: 0.88rem; font-weight: 700; color: #fff;" id="shortlistBarText">Shortlisted: 0 / 4 Products</span>
+    <button id="compareShortlistBtn" class="btn btn-primary" style="border-radius: 30px; padding: 6px 16px; font-size: 0.8rem; font-weight: 800;">⚔️ Compare Shortlist</button>
+  </div>
+
+  <!-- Shortlist Side-by-Side Comparison Modal -->
+  <div class="api-modal-overlay hidden" id="shortlist-modal" style="z-index: 3000; position: fixed; inset: 0; background: rgba(3,0,15,0.75); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center;">
+    <div class="api-modal-content" style="width: 850px; max-width: 95%; background: rgba(8, 5, 30, 0.95); border: 1px solid var(--border-glow); border-radius: 16px; padding: 28px; box-shadow: 0 20px 60px rgba(0, 240, 255, 0.35); position: relative; margin: 16px;">
+      <div class="api-modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 14px; margin-bottom: 16px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: #fff;">⚔️ Side-by-Side Shortlist Faceoff</h3>
+        <button class="api-modal-close" id="close-shortlist-modal" style="background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer;">&times;</button>
+      </div>
+      <div class="api-modal-body" style="overflow-x: auto; max-height: 500px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;" id="shortlistComparisonTable">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border-light); font-family: var(--font-heading); color: var(--accent-cyan); font-size: 0.82rem;">
+              <th style="padding: 12px; font-weight: 700;">Platform</th>
+              <th style="padding: 12px; font-weight: 700;">Product</th>
+              <th style="padding: 12px; font-weight: 700;">Price</th>
+              <th style="padding: 12px; font-weight: 700;">Discount</th>
+              <th style="padding: 12px; font-weight: 700;">Rating</th>
+              <th style="padding: 12px; font-weight: 700;">Delivery</th>
+              <th style="padding: 12px; font-weight: 700;">Trust Score</th>
+              <th style="padding: 12px; font-weight: 700;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="shortlistComparisonTableBody" style="font-size: 0.86rem; color: var(--text-secondary);">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="compare.js"></script>
+</body>
+</html>
