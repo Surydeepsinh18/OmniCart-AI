@@ -31,23 +31,30 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the frontend directory
-const frontendPath = path.join(__dirname, '../frontend');
+const frontendPath = fs.existsSync(path.join(__dirname, '../frontend'))
+  ? path.join(__dirname, '../frontend')
+  : path.join(process.cwd(), 'frontend');
 app.use(express.static(frontendPath));
 
 let isMongoConnected = false;
 
+// Helper to write JSON safely without crashing on read-only serverless filesystems
+function safeWriteFile(filePath, data) {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  } catch (e) {
+    // Read-only filesystem on serverless platforms (e.g. Vercel)
+  }
+}
+
 // Initialize local JSON storage files if missing
-if (!fs.existsSync(FALLBACK_DB_FILE)) {
-  fs.writeFileSync(FALLBACK_DB_FILE, JSON.stringify([], null, 2));
-}
-if (!fs.existsSync(FALLBACK_FAQ_FILE)) {
-  fs.writeFileSync(FALLBACK_FAQ_FILE, JSON.stringify([], null, 2));
-}
-if (!fs.existsSync(FALLBACK_CONTACT_FILE)) {
-  fs.writeFileSync(FALLBACK_CONTACT_FILE, JSON.stringify([], null, 2));
-}
-if (!fs.existsSync(FALLBACK_USERS_FILE)) {
-  fs.writeFileSync(FALLBACK_USERS_FILE, JSON.stringify([], null, 2));
+try {
+  if (!fs.existsSync(FALLBACK_DB_FILE)) safeWriteFile(FALLBACK_DB_FILE, []);
+  if (!fs.existsSync(FALLBACK_FAQ_FILE)) safeWriteFile(FALLBACK_FAQ_FILE, []);
+  if (!fs.existsSync(FALLBACK_CONTACT_FILE)) safeWriteFile(FALLBACK_CONTACT_FILE, []);
+  if (!fs.existsSync(FALLBACK_USERS_FILE)) safeWriteFile(FALLBACK_USERS_FILE, []);
+} catch (e) {
+  // Read-only filesystem fallback
 }
 
 function readLocalDb() {
@@ -59,29 +66,8 @@ function readLocalDb() {
   }
 }
 
-function readUsersDb() {
-  try {
-    const data = fs.readFileSync(FALLBACK_USERS_FILE, 'utf-8');
-    return JSON.parse(data || '[]');
-  } catch (e) {
-    return [];
-  }
-}
-
-function writeUsersDb(users) {
-  try {
-    fs.writeFileSync(FALLBACK_USERS_FILE, JSON.stringify(users, null, 2));
-  } catch (e) {
-    console.error('Failed writing Users DB file:', e.message);
-  }
-}
-
 function writeLocalDb(items) {
-  try {
-    fs.writeFileSync(FALLBACK_DB_FILE, JSON.stringify(items, null, 2));
-  } catch (e) {
-    console.error('Failed writing fallback DB file:', e.message);
-  }
+  safeWriteFile(FALLBACK_DB_FILE, items);
 }
 
 function readFaqDb() {
@@ -94,11 +80,7 @@ function readFaqDb() {
 }
 
 function writeFaqDb(items) {
-  try {
-    fs.writeFileSync(FALLBACK_FAQ_FILE, JSON.stringify(items, null, 2));
-  } catch (e) {
-    console.error('Failed writing FAQ DB file:', e.message);
-  }
+  safeWriteFile(FALLBACK_FAQ_FILE, items);
 }
 
 function readContactDb() {
@@ -111,11 +93,7 @@ function readContactDb() {
 }
 
 function writeContactDb(items) {
-  try {
-    fs.writeFileSync(FALLBACK_CONTACT_FILE, JSON.stringify(items, null, 2));
-  } catch (e) {
-    console.error('Failed writing Contact DB file:', e.message);
-  }
+  safeWriteFile(FALLBACK_CONTACT_FILE, items);
 }
 
 function readUsersDb() {
@@ -127,12 +105,8 @@ function readUsersDb() {
   }
 }
 
-function writeUsersDb(items) {
-  try {
-    fs.writeFileSync(FALLBACK_USERS_FILE, JSON.stringify(items, null, 2));
-  } catch (e) {
-    console.error('Failed writing Users DB file:', e.message);
-  }
+function writeUsersDb(users) {
+  safeWriteFile(FALLBACK_USERS_FILE, users);
 }
 
 let inMemoryUsers = readUsersDb();
@@ -523,13 +497,14 @@ app.get('*', (req, res, next) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 OmniCart AI Backend running on port ${PORT}`);
-  console.log(`📦 Cart API → http://localhost:${PORT}/api/cart`);
-  console.log(`❓ FAQ API → http://localhost:${PORT}/api/faq`);
-  console.log(`📬 Contact API → http://localhost:${PORT}/api/contact`);
-  console.log(`🔑 Auth API → http://localhost:${PORT}/api/auth/login & /register`);
-});
-
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 OmniCart AI Backend running on port ${PORT}`);
+    console.log(`📦 Cart API → http://localhost:${PORT}/api/cart`);
+    console.log(`❓ FAQ API → http://localhost:${PORT}/api/faq`);
+    console.log(`📬 Contact API → http://localhost:${PORT}/api/contact`);
+    console.log(`🔑 Auth API → http://localhost:${PORT}/api/auth/login & /register`);
+  });
+}
 
 export default app;
