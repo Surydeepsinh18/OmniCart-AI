@@ -1,0 +1,23 @@
+[
+  {
+    "_id": "user_demo_1001",
+    "name": "Surydeepsinh Rajput",
+    "email": "surydeepsinhmakwana5@gmail.com",
+    "password": "123456",
+    "createdAt": "2026-07-23T12:12:00.000Z"
+  },
+  {
+    "_id": "user_1784789005446_3lzhl",
+    "name": "Surydeep",
+    "email": "surydeep@gmail.com",
+    "password": "12345678",
+    "createdAt": "2026-07-23T06:43:25.446Z"
+  },
+  {
+    "_id": "user_1784789471479_qkgp8",
+    "name": "surya",
+    "email": "surya@gmail.com",
+    "password": "12345678",
+    "createdAt": "2026-07-23T06:51:11.479Z"
+  }
+]
