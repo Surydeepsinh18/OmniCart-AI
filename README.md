@@ -1,139 +1,244 @@
 # 🛒 OmniCart AI
 
-> An AI-powered smart shopping platform with product comparison, live AI chat, and an intelligent dashboard.
+AI-Powered Shopping Intelligence Platform
+    Compare products, analyze prices, and make smarter buying decisions with AI.
+
 
 ---
 
-## ✨ Features
+## 📌 Overview
 
-- **🤖 AI-Powered Dashboard** — Smart analytics and insights at your fingertips
-- **🔍 Product Comparison** — Compare products side-by-side with AI recommendations
-- **🛒 Smart Cart** — Intelligent shopping cart with real-time updates
-- **💬 Live AI Chat** — Get instant help and product suggestions via AI
-- **📊 Analytics Dashboard** — Track your shopping patterns and trends
-- **❓ FAQ System** — AI-curated frequently asked questions
-- **🔐 User Authentication** — Secure login and signup system
-- **📱 Responsive Design** — Works seamlessly on all devices
+**OmniCart AI** is an AI-powered shopping intelligence platform built using the **MERN Stack**. The platform helps users compare products from multiple online shopping platforms and provides intelligent insights to make informed purchasing decisions.
+
+Instead of manually checking different e-commerce websites, users can search products, compare prices, analyze product details, manage their shopping cart, and explore an AI-inspired shopping experience through a modern and responsive interface.
+
+This project demonstrates full-stack web development skills using modern technologies while providing a scalable foundation for future AI integration.
 
 ---
 
-## 🚀 Tech Stack
+## ✨ Key Features
 
-| Layer      | Technology              |
-|------------|-------------------------|
-| Frontend   | HTML, CSS, JavaScript   |
-| Backend    | Node.js, Express.js     |
-| Database   | MongoDB (Mongoose)      |
-| Build Tool | Vite                    |
-| AI         | Live AI Integration     |
-
----
-
-## 📦 Installation
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [MongoDB](https://www.mongodb.com/) (local or Atlas)
-
-### Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/omnicart-ai.git
-   cd omnicart-ai
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   Create a `.env` file in the root directory:
-   ```env
-   PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/omnicart
-   ```
-
-4. **Start the server**
-   ```bash
-   npm start
-   ```
-
-5. **Start the frontend dev server** (for development)
-   ```bash
-   npm run dev
-   ```
+* 🔍 Smart Product Search
+* 🛍 Product Comparison Dashboard
+* 🤖 AI-Inspired Shopping Experience
+* ❤️ Wishlist Management
+* 🛒 Shopping Cart
+* 👤 User Authentication
+* 📊 Interactive Dashboard
+* 📱 Fully Responsive Design
+* 🌙 Modern Glassmorphism UI
+* ⚡ Fast Performance with Vite
+* 🗂 MongoDB Database Integration
+* 🔗 RESTful API Architecture
 
 ---
 
-## 📁 Project Structure
+## 🚀 Future AI Features
 
-```
-omnicart-ai/
-├── index.html          # Landing page
-├── dashboard.html      # AI Dashboard
-├── cart.html            # Shopping Cart
-├── compare.html         # Product Comparison
-├── learn-more.html      # Learn More page
-├── server.js            # Express backend server
-├── app.js               # App configuration
-├── liveApi.js           # Live AI API integration
-├── styles.css           # Main styles
-├── dashboard.css        # Dashboard styles
-├── cart.css              # Cart styles
-├── compare.css           # Comparison styles
-├── dashboard.js         # Dashboard logic
-├── cart.js              # Cart logic
-├── compare.js           # Comparison logic
+The platform is designed to support future AI capabilities such as:
+
+* 🤖 AI Product Recommendation Engine
+* 📈 Price Prediction
+* 💰 Price Drop Alerts
+* ⭐ AI Review Analysis
+* 🔍 Fake Review Detection
+* 🛡 Seller Trust Score
+* 🚚 Smart Delivery Prediction
+* 🎤 Voice Search
+* 📷 Image-Based Product Search
+* 🧠 Multi-Agent AI Shopping Assistant
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript (ES6)
+* Vite
+
+### Backend
+
+* Node.js
+* Express.js
+
+### Database
+
+* MongoDB
+* Mongoose
+
+### Development Tools
+
+* Git
+* GitHub
+* VS Code
+* npm
+
+---
+
+## 📂 Project Structure
+
+```text
+OmniCart-AI/
+│
+├── assets/
+├── public/
 ├── js/
-│   ├── searchHistory.js # Search history tracking
-│   └── wishlist.js      # Wishlist functionality
 ├── models/
-│   ├── Cart.js          # Cart data model
-│   ├── Faq.js           # FAQ data model
-│   └── User.js          # User data model
+├── routes/
+├── index.html
+├── dashboard.html
+├── compare.html
+├── cart.html
+├── app.js
+├── server.js
 ├── package.json
-└── .gitignore
+├── package-lock.json
+└── README.md
 ```
 
 ---
 
-## 🛠️ Available Scripts
+## ⚙️ Installation
 
-| Command           | Description                     |
-|--------------------|---------------------------------|
-| `npm start`       | Start the production server     |
-| `npm run server`  | Start the backend server        |
-| `npm run dev`     | Start Vite dev server           |
-| `npm run build`   | Build for production            |
-| `npm run preview` | Preview production build        |
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/OmniCart-AI.git
+```
+
+### 2. Navigate to the Project Folder
+
+```bash
+cd OmniCart-AI
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env` file in the root directory and add:
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+```
+
+---
+
+### 5. Start the Backend Server
+
+```bash
+npm start
+```
+
+or
+
+```bash
+node server.js
+```
+
+---
+
+### 6. Run the Frontend
+
+If using Vite:
+
+```bash
+npm run dev
+```
+
+---
+
+## 📸 Screenshots
+
+> Add screenshots of the following pages here.
+
+* Home Page
+* Dashboard
+* Product Comparison
+* Shopping Cart
+* Wishlist
+* User Profile
+
+---
+
+## 🎯 Project Objectives
+
+* Build a modern full-stack shopping platform.
+* Simplify product comparison across multiple platforms.
+* Provide an intuitive and responsive user interface.
+* Demonstrate MERN Stack development skills.
+* Create a scalable architecture for future AI integration.
+
+---
+
+## 💡 Use Cases
+
+* Product Comparison
+* Smart Shopping
+* Wishlist Management
+* Shopping History
+* User Authentication
+* AI-Based Product Analysis (Future Scope)
+
+---
+
+## 🔮 Future Enhancements
+
+* AI Recommendation System
+* Live Product Search
+* Real-Time Price Comparison
+* AI Shopping Assistant
+* Price Prediction
+* Review Sentiment Analysis
+* Fake Review Detection
+* Seller Trust Analytics
+* Personalized Recommendations
+* Multi-Agent AI Architecture
+* Mobile Application
+* Payment Gateway Integration
+* Email Notifications
+* Push Notifications
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
+Contributions are welcome.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+1. Fork the repository.
+2. Create a new feature branch.
+3. Commit your changes.
+4. Push to your branch.
+5. Create a Pull Request.
 
 ---
 
-## 👤 Author
+## 📜 License
 
-**Surydeepsinh Rajput**
+This project is developed for educational and learning purposes.
 
 ---
 
-> Built with ❤️ using AI-powered technology
+## 👨‍💻 Author
+
+**Suryadeepsinh Makwana**
+
+**B.Tech Computer Science Engineering**
+
+Parul University
+
+---
+
+## ⭐ Support
+
+If you found this project helpful, please consider giving it a ⭐ on GitHub.
+
+Your support motivates future development and improvements.
