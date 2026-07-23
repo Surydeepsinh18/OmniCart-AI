@@ -118,6 +118,25 @@ function writeContactDb(items) {
   }
 }
 
+function readUsersDb() {
+  try {
+    const data = fs.readFileSync(FALLBACK_USERS_FILE, 'utf-8');
+    return JSON.parse(data || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function writeUsersDb(items) {
+  try {
+    fs.writeFileSync(FALLBACK_USERS_FILE, JSON.stringify(items, null, 2));
+  } catch (e) {
+    console.error('Failed writing Users DB file:', e.message);
+  }
+}
+
+let inMemoryUsers = readUsersDb();
+
 // Connect to MongoDB with timeout
 mongoose.connect(MONGO_URI, {
   serverSelectionTimeoutMS: 2500,
@@ -438,8 +457,9 @@ app.post('/api/auth/register', async (req, res) => {
       const token = 'token_' + Date.now() + '_' + saved._id;
       return res.status(201).json({ success: true, user: { _id: saved._id, name: saved.name, email: saved.email }, token });
     } else {
-      const users = readUsersDb();
-      const existing = users.find(u => u.email.toLowerCase() === cleanEmail);
+      const diskUsers = readUsersDb();
+      const allUsers = [...diskUsers, ...inMemoryUsers.filter(u => !diskUsers.some(x => x._id === u._id))];
+      const existing = allUsers.find(u => u.email.toLowerCase() === cleanEmail);
       if (existing) {
         return res.status(400).json({ success: false, error: 'Account with this email already exists' });
       }
@@ -450,8 +470,9 @@ app.post('/api/auth/register', async (req, res) => {
         password,
         createdAt: new Date()
       };
-      users.push(newUser);
-      writeUsersDb(users);
+      allUsers.push(newUser);
+      inMemoryUsers.push(newUser);
+      writeUsersDb(allUsers);
       const token = 'token_' + Date.now() + '_' + newUser._id;
       return res.status(201).json({ success: true, user: { _id: newUser._id, name: newUser.name, email: newUser.email }, token });
     }
@@ -482,8 +503,9 @@ app.post('/api/auth/login', async (req, res) => {
       const token = 'token_' + Date.now() + '_' + user._id;
       return res.json({ success: true, user: { _id: user._id, name: user.name, email: user.email }, token });
     } else {
-      const users = readUsersDb();
-      const user = users.find(u => u.email.toLowerCase() === cleanEmail && u.password === password);
+      const diskUsers = readUsersDb();
+      const allUsers = [...diskUsers, ...inMemoryUsers.filter(u => !diskUsers.some(x => x._id === u._id))];
+      const user = allUsers.find(u => u.email.toLowerCase() === cleanEmail && u.password === password);
       if (!user) {
         return res.status(401).json({ success: false, error: 'Invalid email or password' });
       }
@@ -508,5 +530,6 @@ app.listen(PORT, () => {
   console.log(`📬 Contact API → http://localhost:${PORT}/api/contact`);
   console.log(`🔑 Auth API → http://localhost:${PORT}/api/auth/login & /register`);
 });
+
 
 export default app;
