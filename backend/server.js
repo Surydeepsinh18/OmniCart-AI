@@ -508,3 +508,5 @@ app.listen(PORT, () => {
   console.log(`📬 Contact API → http://localhost:${PORT}/api/contact`);
   console.log(`🔑 Auth API → http://localhost:${PORT}/api/auth/login & /register`);
 });
+
+export default app;
